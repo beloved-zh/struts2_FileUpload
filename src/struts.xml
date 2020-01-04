@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+	<!-- 开启动态方法调用 -->
+    <constant name="struts.enable.DynamicMethodInvocation" value="true" />
+    <!-- 打开开发者模式		多点错误信息 -->
+    <constant name="struts.devMode" value="true" />
+    <!-- 对所有action设置文件上传的最大值 -->
+    <constant name="struts.multipart.maxSize" value="20971520" />
+    
+    <package name="pack" extends="struts-default">
+    	
+    	<action name="upload" class="com.zh.action.UploadAction" method="uploadFile">
+    		<result name="input">/error.jsp</result>
+    		<interceptor-ref name="fileUpload">
+    			<param name="maximumSize">20971520</param><!-- 设置当前action允许的上传文件大小 -->
+    			<param name="allowedTypes">image/jpeg</param><!-- 设置上传允许的文件的mimeType类型，多个使用逗号隔开-->
+    			<param name="allowedExtensions">ico,jpg</param><!-- 设置上传允许的文件的后缀名，多个使用逗号隔开-->
+    		</interceptor-ref>
+    		<interceptor-ref name="defaultStack"/>
+    	</action>
+    	<action name="uploadMany" class="com.zh.action.UploadManyAction" method="uploadFile">
+    		<result name="input">/error.jsp</result>
+    	</action>
+    	<action name="downLoad" class="com.zh.action.DownloadAction" method="download">
+    		<!--stream类型:直接向页面输出二进制数据 -->
+            <result name="success" type="stream">
+                <!-- 给stream结果视图注入参数:Content-Type -->
+                <param name="contentType">application/octet-stream</param>
+                <!-- 告知浏览器一什么方式打开 ${@java.net.URLEncoder@encode(filename,"UTF-8")}-->
+                													<!-- 设置下载时的文件名  -->
+                <param name="contentDisposition">attachment;filename=ROOT.war</param>
+                <!-- 注入字节流，取值要写动作类中的set方法名称，首字母改成小写 -->
+                <param name="inputName">inputStream</param>
+            </result>
+    	</action>
+    
+    </package>
+</struts>
